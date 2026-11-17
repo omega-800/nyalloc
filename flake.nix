@@ -35,7 +35,6 @@
       pname = "nyalloc";
     in
     {
-      asdf = src;
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
@@ -57,9 +56,6 @@
               version = "0.0.1${if target == "release" then "" else "-" + target}";
               inherit src;
 
-              buildPhase = ''
-                mkdir -p "$out/bin"
-              '';
               installPhase = ''
                 OUT="${pname}" TARGETDIR="$out/bin" make ${target}
               '';
@@ -70,6 +66,19 @@
           debug = mkTarget "debug";
         }
       );
+
+      checks = eachSystem (pkgs: {
+        default = pkgs.stdenv.mkDerivation {
+          inherit pname src;
+          version = "0.0.1-check";
+          buildPhase = "true";
+          installPhase = "mkdir -p $out";
+          doCheck = true;
+          checkPhase = ''
+            make test
+          '';
+        };
+      });
 
       apps = eachSystem (pkgs: {
         default = {

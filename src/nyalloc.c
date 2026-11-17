@@ -44,6 +44,8 @@ static Block *new_block(size_t size) {
 }
 
 static void split_block(Block *block, size_t size) {
+  size = align(size);
+  block->status = 0;
   if (block->size <= size + sizeof(Block) + sizeof(size_t))
     return;
 
@@ -57,7 +59,6 @@ static void split_block(Block *block, size_t size) {
 
   block->size = size;
   block->next = second;
-  block->status = 0;
 }
 
 static void join_blocks(Block *block) {
@@ -85,7 +86,7 @@ void *nyalloc(size_t size) {
   return (void *)((char *)block + sizeof(Block));
 }
 
-void fwee(void *_Nullable p) {
+void fwee(void *p) {
   if (!p)
     return;
 

@@ -4,6 +4,6 @@
 #include <stdlib.h>
 
 void *nyalloc(size_t size);
-void fwee(void *_Nullable p);
+void fwee(void *p);
 
 #endif
